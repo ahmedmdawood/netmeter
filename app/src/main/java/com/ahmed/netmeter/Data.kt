@@ -83,8 +83,10 @@ object UsageStatsHelper {
         if (!hasUsageAccess(context)) return emptyList()
         val pm = context.packageManager
         return try {
+            // queryDetails is the public detailed query; buckets carry the uid,
+            // so grouping by uid gives per-app totals for the window.
             val stats = networkStatsManager(context)
-                .queryAndAggregateUsageStats(networkType, null, startMillis, endMillis)
+                .queryDetails(networkType, null, startMillis, endMillis)
             val bucket = NetworkStats.Bucket()
             val perUid = HashMap<Int, Long>()
             while (stats.hasNextBucket()) {
